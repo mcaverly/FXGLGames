@@ -181,8 +181,7 @@ public class PongApp extends GameApplication {
                 .interpolator(Interpolators.BOUNCE.EASE_OUT())
                 .rotate(bat)
                 .from(FXGLMath.random(-25, 25))
-                .to(0)
-                .buildAndPlay();
+                .to(0);
     }
 
     private void showGameOver(String winner) {
