@@ -29,6 +29,9 @@ package com.almasb.fxglgames.pong;
 import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.app.scene.FXGLMenu;
+import com.almasb.fxgl.app.scene.SceneFactory;
+import com.almasb.fxgl.app.scene.SimpleGameMenu;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
@@ -39,6 +42,7 @@ import com.almasb.fxgl.ui.UI;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -57,6 +61,23 @@ public class PongApp extends GameApplication {
         settings.setTitle("Pong");
         settings.setVersion("1.0");
         settings.setFontUI("pong.ttf");
+
+        settings.setMainMenuEnabled(true);
+        settings.setGameMenuEnabled(true);
+
+        settings.setSceneFactory(new SceneFactory() {
+            @NotNull
+            @Override
+            public FXGLMenu newMainMenu() {
+                return new PongMainMenu();
+            }
+
+            @NotNull
+            @Override
+            public FXGLMenu newGameMenu() {
+                return new SimpleGameMenu();
+            }
+        });
     }
 
     private BatComponent playerBat;
@@ -167,9 +188,9 @@ public class PongApp extends GameApplication {
     }
 
     private void initGameObjects() {
-        Entity ball = spawn("ball", getAppWidth() / 2 - 5, getAppHeight() / 2 - 5);
-        Entity bat1 = spawn("bat", new SpawnData(getAppWidth() / 4, getAppHeight() / 2 - 30).put("isPlayer", true));
-        Entity bat2 = spawn("bat", new SpawnData(3 * getAppWidth() / 4 - 20, getAppHeight() / 2 - 30).put("isPlayer", false));
+        Entity ball = spawn("ball", getAppWidth() / 2. - 5, getAppHeight() / 2. - 5);
+        Entity bat1 = spawn("bat", new SpawnData(getAppWidth() / 4., getAppHeight() / 2. - 30).put("isPlayer", true));
+        Entity bat2 = spawn("bat", new SpawnData(3 * getAppWidth() / 4. - 20, getAppHeight() / 2. - 30).put("isPlayer", false));
 
         playerBat = bat1.getComponent(BatComponent.class);
     }
@@ -185,7 +206,7 @@ public class PongApp extends GameApplication {
     }
 
     private void showGameOver(String winner) {
-        getDialogService().showMessageBox(winner + " won! Demo over\nThanks for playing", getGameController()::exit);
+        getDialogService().showMessageBox(winner + " won! Demo over\nThanks for playing", getGameController()::gotoMainMenu);
     }
 
     public static void main(String[] args) {
