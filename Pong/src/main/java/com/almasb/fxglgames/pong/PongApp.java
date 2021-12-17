@@ -29,6 +29,9 @@ package com.almasb.fxglgames.pong;
 import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.app.scene.FXGLMenu;
+import com.almasb.fxgl.app.scene.SceneFactory;
+import com.almasb.fxgl.app.scene.SimpleGameMenu;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
@@ -39,8 +42,10 @@ import com.almasb.fxgl.ui.UI;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.Objects;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
@@ -52,14 +57,32 @@ import static com.almasb.fxgl.dsl.FXGL.*;
  */
 public class PongApp extends GameApplication {
 
+    private BallComponent gameBall;
+    private BatComponent playerBat;
+
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setTitle("Pong");
         settings.setVersion("1.0");
         settings.setFontUI("pong.ttf");
-    }
 
-    private BatComponent playerBat;
+        settings.setMainMenuEnabled(true);
+        settings.setGameMenuEnabled(true);
+
+        settings.setSceneFactory(new SceneFactory() {
+            @NotNull
+            @Override
+            public FXGLMenu newMainMenu() {
+                return new PongMainMenu();
+            }
+
+            @NotNull
+            @Override
+            public FXGLMenu newGameMenu() {
+                return new SimpleGameMenu();
+            }
+        });
+    }
 
     @Override
     protected void initInput() {
@@ -124,8 +147,10 @@ public class PongApp extends GameApplication {
             @Override
             protected void onHitBoxTrigger(Entity a, Entity b, HitBox boxA, HitBox boxB) {
                 if (boxB.getName().equals("LEFT")) {
+                    gameBall.resetBall();
                     inc("player2score", +1);
                 } else if (boxB.getName().equals("RIGHT")) {
+                    gameBall.resetBall();
                     inc("player1score", +1);
                 }
 
@@ -167,10 +192,11 @@ public class PongApp extends GameApplication {
     }
 
     private void initGameObjects() {
-        Entity ball = spawn("ball", getAppWidth() / 2 - 5, getAppHeight() / 2 - 5);
-        Entity bat1 = spawn("bat", new SpawnData(getAppWidth() / 4, getAppHeight() / 2 - 30).put("isPlayer", true));
-        Entity bat2 = spawn("bat", new SpawnData(3 * getAppWidth() / 4 - 20, getAppHeight() / 2 - 30).put("isPlayer", false));
+        Entity ball = spawn("ball", getAppWidth() / 2. - 5, getAppHeight() / 2. - 5);
+        Entity bat1 = spawn("bat", new SpawnData(getAppWidth() / 4., getAppHeight() / 2. - 30).put("isPlayer", true));
+        Entity bat2 = spawn("bat", new SpawnData(3 * getAppWidth() / 4. - 20, getAppHeight() / 2. - 30).put("isPlayer", false));
 
+        gameBall = ball.getComponent(BallComponent.class);
         playerBat = bat1.getComponent(BatComponent.class);
     }
 
@@ -181,12 +207,11 @@ public class PongApp extends GameApplication {
                 .interpolator(Interpolators.BOUNCE.EASE_OUT())
                 .rotate(bat)
                 .from(FXGLMath.random(-25, 25))
-                .to(0)
-                .buildAndPlay();
+                .to(0);
     }
 
     private void showGameOver(String winner) {
-        getDialogService().showMessageBox(winner + " won! Demo over\nThanks for playing", getGameController()::exit);
+        getDialogService().showMessageBox(winner + " won! Demo over\nThanks for playing", getGameController()::gotoMainMenu);
     }
 
     public static void main(String[] args) {
