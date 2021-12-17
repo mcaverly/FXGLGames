@@ -75,7 +75,6 @@ public class MainUIController implements UIController {
     private void animateLabel(Label label) {
         animationBuilder()
                 .duration(Duration.seconds(0.33))
-                .fadeIn(label)
-                .buildAndPlay();
+                .fadeIn(label);
     }
 }
