@@ -40,6 +40,7 @@ import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import javafx.beans.binding.Bindings;
+import javafx.geometry.Point2D;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -57,7 +58,7 @@ public class PongFactory implements EntityFactory {
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.DYNAMIC);
         physics.setFixtureDef(new FixtureDef().density(0.3f).restitution(1.0f));
-        physics.setOnPhysicsInitialized(() -> physics.setLinearVelocity(5 * 60, -5 * 60));
+        physics.setOnPhysicsInitialized(() -> physics.setLinearVelocity(new Point2D(-1 + (Math.random() * ((1 - (-1)) + 1)),0.)));
 
         var endGame = getip("player1score").isEqualTo(10).or(getip("player2score").isEqualTo(10));
 

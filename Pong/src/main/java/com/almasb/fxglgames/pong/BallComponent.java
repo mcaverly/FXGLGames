@@ -39,11 +39,16 @@ import static java.lang.Math.*;
 public class BallComponent extends Component {
 
     private PhysicsComponent physics;
+    private boolean resetBallFlag;
 
     @Override
     public void onUpdate(double tpf) {
         limitVelocity();
         checkOffscreen();
+
+        while (resetBallFlag) {
+            resetBall();
+        }
     }
 
     private void limitVelocity() {
@@ -62,10 +67,21 @@ public class BallComponent extends Component {
     // we use a physics engine, so it is possible to push the ball through a wall to outside of the screen
     private void checkOffscreen() {
         if (getEntity().getBoundingBoxComponent().isOutside(getGameScene().getViewport().getVisibleArea())) {
-            physics.overwritePosition(new Point2D(
-                    getAppWidth() / 2,
-                    getAppHeight() / 2
-            ));
+            resetBall();
+        }
+    }
+
+    public void resetBall() {
+        Point2D position = new Point2D(getAppWidth() / 2., getAppHeight() / 2.);
+        Point2D velocity = new Point2D(-1 + (Math.random() * ((1 - (-1)) + 1)),0.);
+
+        try {
+            physics.overwritePosition(position);
+            physics.setLinearVelocity(velocity);
+            limitVelocity();
+            resetBallFlag = false;
+        } catch (IllegalStateException ex) {
+            resetBallFlag = true;
         }
     }
 }

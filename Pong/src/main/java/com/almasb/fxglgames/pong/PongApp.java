@@ -45,6 +45,7 @@ import javafx.util.Duration;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.Objects;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
@@ -55,6 +56,9 @@ import static com.almasb.fxgl.dsl.FXGL.*;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class PongApp extends GameApplication {
+
+    private BallComponent gameBall;
+    private BatComponent playerBat;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -79,8 +83,6 @@ public class PongApp extends GameApplication {
             }
         });
     }
-
-    private BatComponent playerBat;
 
     @Override
     protected void initInput() {
@@ -145,8 +147,10 @@ public class PongApp extends GameApplication {
             @Override
             protected void onHitBoxTrigger(Entity a, Entity b, HitBox boxA, HitBox boxB) {
                 if (boxB.getName().equals("LEFT")) {
+                    gameBall.resetBall();
                     inc("player2score", +1);
                 } else if (boxB.getName().equals("RIGHT")) {
+                    gameBall.resetBall();
                     inc("player1score", +1);
                 }
 
@@ -192,6 +196,7 @@ public class PongApp extends GameApplication {
         Entity bat1 = spawn("bat", new SpawnData(getAppWidth() / 4., getAppHeight() / 2. - 30).put("isPlayer", true));
         Entity bat2 = spawn("bat", new SpawnData(3 * getAppWidth() / 4. - 20, getAppHeight() / 2. - 30).put("isPlayer", false));
 
+        gameBall = ball.getComponent(BallComponent.class);
         playerBat = bat1.getComponent(BatComponent.class);
     }
 
