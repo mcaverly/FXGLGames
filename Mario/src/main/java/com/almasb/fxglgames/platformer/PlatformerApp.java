@@ -156,6 +156,10 @@ public class PlatformerApp extends GameApplication {
             runOnce(() -> getGameScene().removeGameView(gameView), Duration.seconds(1.6));
         });
 
+        onCollisionOneTimeOnly(PLAYER, HIT_BOX, (player, hitBox) -> {
+            hitBox.removeFromWorld();
+        });
+
         onCollisionOneTimeOnly(PLAYER, EXIT_TRIGGER, (player, trigger) -> {
             makeExitDoor();
         });

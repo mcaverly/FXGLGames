@@ -38,6 +38,15 @@ public class PlatformerFactory implements EntityFactory {
                 .build();
     }
 
+    @Spawns("hitBox")
+    public Entity newHitBox(SpawnData data) {
+        return entityBuilder(data)
+                .type(HIT_BOX)
+                .bbox(new HitBox(BoundingShape.box(data.<Integer>get("width"), data.<Integer>get("height"))))
+                .with(new CollidableComponent(true))
+                .build();
+    }
+
     @Spawns("platform")
     public Entity newPlatform(SpawnData data) {
         return entityBuilder(data)
